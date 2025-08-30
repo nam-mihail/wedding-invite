@@ -1,10 +1,3 @@
-/*
-  Вставь в public/index.html (или в head приложения) этот тег, чтобы шрифт загружался:
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
-
-  В этом файле я применяю 'Dancing Script' ко всему приложению через inline-style на корневом элементе.
-*/
-
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -13,7 +6,6 @@ import {
   CalendarHeart,
   MapPin,
   Heart,
-  Send,
 } from "lucide-react";
 import emailjs from "@emailjs/browser";
 
@@ -46,10 +38,7 @@ export default function WeddingInviteBook() {
   const goTo = (i) => setPage(Math.max(0, Math.min(total - 1, i)));
 
   return (
-    <div
-      style={{ fontFamily: "'Dancing Script', cursive" }}
-      className="min-h-screen w-full bg-gradient-to-b from-[#fdf6f0] via-white to-[#f5ebe1] flex items-center justify-center p-4 md:p-8"
-    >
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#fdf6f0] via-white to-[#f5ebe1] flex items-center justify-center p-4 md:p-8">
       <CardWrapper className="w-full max-w-3xl">
         <CardContentWrapper className="p-0">
           {page !== 0 && <Header page={page} total={total} goTo={goTo} />}
@@ -106,7 +95,6 @@ export default function WeddingInviteBook() {
 }
 
 // --- Components ---
-
 function CardWrapper({ children, className }) {
   return (
     <div
@@ -191,10 +179,10 @@ function NavButton({ direction, onClick, disabled }) {
   );
 }
 
+// ---------------- Pages ----------------
 function CoverPage({ onNext }) {
   return (
     <div className="w-full h-full flex flex-col bg-[#fdf6f0]">
-      {/* Верхняя половина — картинка */}
       <div className="h-1/2 w-full flex-shrink-0 flex items-center justify-center">
         <img
           src="../wedding-banner.png"
@@ -202,14 +190,12 @@ function CoverPage({ onNext }) {
           className="max-h-full max-w-full object-contain"
         />
       </div>
-
-      {/* Нижняя половина — текст и кнопка */}
       <div className="h-1/2 w-full flex flex-col justify-center items-center px-6 text-center">
         <motion.h1
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="text-3xl md:text-5xl tracking-tight text-[#3a1f1f]"
+          className="text-3xl md:text-5xl tracking-tight"
         >
           Приглашение на свадьбу
         </motion.h1>
@@ -217,7 +203,7 @@ function CoverPage({ onNext }) {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="mt-3 text-sm md:text-base text-[#4b2e2e]/90"
+          className="mt-3 text-sm md:text-base leading-relaxed"
         >
           Михаил & Валерия — 4 октября 2025
         </motion.p>
@@ -249,18 +235,14 @@ function InvitationWithSchedulePage() {
             Счастливый день
           </span>
         </div>
-        <h2 className="mt-2 text-2xl md:text-4xl text-[#3a1f1f]">
-          Мы говорим «Да!»
-        </h2>
-        <p className="mt-4 text-sm md:text-base text-[#4b2e2e]/90 leading-relaxed">
+        <h2 className="mt-2 text-2xl md:text-4xl">Мы говорим «Да!»</h2>
+        <p className="mt-4 text-sm md:text-base leading-relaxed">
           Дорогие друзья! С радостью приглашаем вас разделить с нами особенный
           день.
         </p>
         <div className="mt-6">
-          <h3 className="font-semibold text-[#3a1f1f] mb-2">
-            Расписание мероприятия
-          </h3>
-          <ul className="space-y-2 text-[#4b2e2e]/90">
+          <h3 className="font-semibold mb-2">Расписание мероприятия</h3>
+          <ul className="space-y-2">
             <li>18:00 — Прибытие гостей</li>
             <li>18:15 — Начало венчания</li>
             <li>18:45-21:00 — Развлечения и ужин</li>
@@ -272,26 +254,20 @@ function InvitationWithSchedulePage() {
 }
 
 function SeatingPage() {
-  const tables = Array.from({ length: 12 }, (_, i) =>
+  const tables = Array.from({ length: 12 }, () =>
     Array.from({ length: 7 }, (_, j) => `Гость ${j + 1}`)
   );
-
   return (
     <div className="h-full w-full p-6 md:p-10 overflow-auto flex flex-col items-center">
-      <h2 className="font-serif text-3xl md:text-5xl text-[#3a1f1f] mb-6 text-center">
-        Рассадка гостей
-      </h2>
-
+      <h2 className="text-3xl md:text-5xl mb-6 text-center">Рассадка гостей</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
         {tables.map((table, idx) => (
           <div
             key={idx}
             className="bg-white/80 border border-[#d9c2a9] rounded-2xl p-4 shadow-md flex flex-col items-center"
           >
-            <h3 className="font-semibold text-[#4b2e2e] mb-2">
-              Стол {idx + 1}
-            </h3>
-            <ul className="text-sm md:text-base text-[#4b2e2e]/90 space-y-1">
+            <h3 className="font-semibold mb-2">Стол {idx + 1}</h3>
+            <ul className="text-sm md:text-base space-y-1">
               {table.map((guest, gIdx) => (
                 <li key={gIdx}>{guest}</li>
               ))}
@@ -312,7 +288,7 @@ function RsvpEmailPage({ onSubmitted }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    emailjs.init("T3044GPpyR59dc_zU"); // вставь сюда Public Key из EmailJS
+    emailjs.init("T3044GPpyR59dc_zU");
   }, []);
 
   const submit = (e) => {
@@ -322,7 +298,6 @@ function RsvpEmailPage({ onSubmitted }) {
     if (!attend) return setError("Пожалуйста, выберите ответ");
 
     const templateParams = { name, attending: attend, guests, message };
-
     emailjs
       .send("service_svtyp46", "template_s457txe", templateParams)
       .then(() => {
@@ -334,68 +309,51 @@ function RsvpEmailPage({ onSubmitted }) {
 
   return (
     <div className="h-full flex flex-col items-center justify-center p-6 md:p-10">
-      <h2 className="font-serif text-2xl md:text-4xl text-center text-[#3a1f1f] mb-6">
-        Ваш Ответ
-      </h2>
-
+      <h2 className="text-2xl md:text-4xl text-center mb-6">Ваш Ответ</h2>
       {!sent ? (
         <form
           onSubmit={submit}
           className="w-full max-w-md flex flex-col gap-5 bg-white/90 p-6 rounded-2xl shadow-lg"
         >
-          {/* Имя */}
-          <div className="relative">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="peer w-full p-3 border border-[#d9c2a9] rounded-lg focus:outline-none focus:border-[#8b5e3c]"
-              placeholder="Имя"
-            />
-          </div>
-
-          {/* Количество гостей */}
-          <div className="w-full">
-            <input
-              id="guests"
-              type="number"
-              value={guests}
-              onChange={(e) => setGuests(e.target.value)}
-              placeholder="Введите количество гостей"
-              className="w-full rounded-xl border border-[#d9c2a9] px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-[#8b5e3c] focus:ring-[#8b5e3c] sm:text-sm"
-            />
-          </div>
-
-          {/* Придет / Не придет */}
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Имя"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:border-[#8b5e3c]"
+          />
+          <input
+            type="number"
+            value={guests}
+            onChange={(e) => setGuests(e.target.value)}
+            placeholder="Количество гостей"
+            className="w-full rounded-xl border px-4 py-3 focus:border-[#8b5e3c]"
+          />
           <select
             value={attend}
             onChange={(e) => setAttend(e.target.value)}
-            className="w-full p-3 border border-[#d9c2a9] rounded-lg focus:outline-none focus:border-[#8b5e3c]"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:border-[#8b5e3c]"
           >
             <option value="">Выберите ответ</option>
             <option value="yes">Да</option>
             <option value="no">Нет</option>
           </select>
-
-          {/* Сообщение */}
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Сообщение (по желанию)"
-            className="w-full p-3 border border-[#d9c2a9] rounded-lg focus:outline-none focus:border-[#8b5e3c] resize-none h-24"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:border-[#8b5e3c] h-24 resize-none"
           />
-
           {error && <div className="text-red-600 text-sm">{error}</div>}
-
           <button
             type="submit"
-            className="w-full py-3 bg-[#8b5e3c] text-white rounded-2xl hover:bg-[#a9745a] font-semibold transition-colors"
+            className="w-full py-3 bg-[#8b5e3c] text-white rounded-2xl hover:bg-[#a9745a] font-semibold"
           >
             Отправить
           </button>
         </form>
       ) : (
-        <div className="text-center mt-6 text-[#4b2e2e] font-semibold">
+        <div className="text-center mt-6 font-semibold">
           Спасибо! Ваш ответ отправлен.
         </div>
       )}
@@ -407,17 +365,10 @@ function AddressPage() {
   return (
     <div className="h-full flex flex-col items-center justify-center p-6 md:p-10">
       <MapPin className="h-10 w-10 text-[#6b4226]" />
-      <h2 className="mt-4 font-serif text-2xl md:text-4xl text-[#3a1f1f] text-center">
-        Где нас найти
-      </h2>
-      <p className="mt-2 text-center text-[#4b2e2e]/90">
-        Wedding Hall "Selene"
-      </p>
-      <p className="mt-2 text-center text-[#4b2e2e]/90">
-        충남 천안시 동남구 배울1길 35
-      </p>
+      <h2 className="mt-4 text-2xl md:text-4xl text-center">Где нас найти</h2>
+      <p className="mt-2 text-center">Wedding Hall "Selene"</p>
+      <p className="mt-2 text-center">충남 천안시 동남구 배울1길 35</p>
       <div className="flex flex-col md:flex-row gap-4 mt-4">
-        {/* Naver Map */}
         <a
           href="https://naver.me/xxFFYWmg"
           target="_blank"
@@ -426,8 +377,6 @@ function AddressPage() {
         >
           Открыть в Naver Map
         </a>
-
-        {/* Kakao Map */}
         <a
           href="https://kko.kakao.com/RALXOaJ5Yn"
           target="_blank"
