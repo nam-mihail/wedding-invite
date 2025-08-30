@@ -18,17 +18,16 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Great Vibes";
-  font-weight: 400;
+  font-family: "Playfair Display";
+  font-weight: 700;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Great Vibes", cursive;
 }
 
-/* body,
+body,
 p,
 span,
 li,
@@ -36,5 +35,6 @@ a,
 input,
 textarea,
 button {
-  font-family: "Montserrat", sans-serif;
-} */
+  font-family: "Lora";
+  font-weight: 500;
+}
