@@ -78,8 +78,8 @@ export default function WeddingInviteBook() {
               >
                 {page === 0 && <CoverPage onNext={next} />}
                 {page === 1 && <InvitationWithSchedulePage />}
-                {page === 2 && <SeatingPage />}
-                {page === 3 && <RsvpEmailPage onSubmitted={() => next()} />}
+                {page === 2 && <RsvpEmailPage onSubmitted={() => next()} />}
+                {page === 3 && <SeatingPage />}
                 {page === 4 && <AddressPage />}
               </motion.div>
             </AnimatePresence>
@@ -195,7 +195,7 @@ function CoverPage({ onNext }) {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="text-3xl md:text-5xl tracking-tight"
+          className="text-3xl md:text-5xl tracking-tight text-[#6b4226]"
         >
           Приглашение на свадьбу
         </motion.h1>
@@ -203,7 +203,7 @@ function CoverPage({ onNext }) {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="mt-3 text-sm md:text-base leading-relaxed"
+          className="mt-3 text-sm md:text-xl leading-relaxed text-[#6b4226]"
         >
           Михаил & Валерия — 4 октября 2025
         </motion.p>
@@ -227,27 +227,55 @@ function CoverPage({ onNext }) {
 
 function InvitationWithSchedulePage() {
   return (
-    <div className="h-full overflow-y-auto p-6 md:p-10">
-      <div className="mx-auto max-w-2xl text-center">
-        <div className="flex items-center justify-center gap-2 text-[#6b4226]">
-          <CalendarHeart className="h-5 w-5" />
-          <span className="uppercase tracking-widest text-xs">
+    <div className="h-full overflow-y-auto p-6 md:p-10 flex justify-center">
+      <div className="max-w-2xl text-center">
+        {/* Символический акцент */}
+        <div className="flex items-center justify-center gap-2 text-[#6b4226] mb-4">
+          <CalendarHeart className="h-6 w-6" />
+          <span className="uppercase tracking-widest text-sm md:text-xs">
             Счастливый день
           </span>
         </div>
-        <h2 className="mt-2 text-2xl md:text-4xl">Мы говорим «Да!»</h2>
-        <p className="mt-4 text-sm md:text-base leading-relaxed">
-          Дорогие друзья! С радостью приглашаем вас разделить с нами особенный
-          день.
+
+        {/* Заголовок */}
+        <h2 className="font-playfair text-3xl md:text-4xl text-[#6b4226] leading-snug">
+          Дорогие друзья, родные и близкие
+        </h2>
+
+        {/* Основной текст */}
+        <p className="mt-4 text-base md:text-lg leading-relaxed font-lora text-[#4b2e2e]">
+          С радостью и трепетом приглашаем Вас стать свидетелями нашего события,
+          нашей свадьбы, начала нашей новой главы. Разделите с нами этот
+          особенный и долгожданный день. <br />
+          <span className="mt-2 block italic">С любовью~</span>
         </p>
-        <div className="mt-6">
-          <h2 className="font-semibold mb-2">Расписание мероприятия</h2>
-          <ul className="space-y-2">
-            <li>18:00 — Прибытие гостей</li>
-            <li>18:15 — Начало венчания</li>
-            <li>18:45-21:00 — Развлечения и ужин</li>
+
+        {/* Расписание */}
+        <div className="mt-8 text-left bg-white/80 border border-[#d9c2a9] rounded-2xl p-6 shadow-md">
+          <h3 className="font-playfair text-xl md:text-2xl text-center text-[#6b4226] mb-4">
+            Расписание мероприятия
+          </h3>
+          <ul className="space-y-2 text-[#4b2e2e] font-lora text-base md:text-lg">
+            <li>
+              <strong>День:</strong> 4.10.2025
+            </li>
+            <li>
+              <strong>Прибытие гостей:</strong> 18:00
+            </li>
+            <li>
+              <strong>Венчание:</strong> 18:15
+            </li>
+            <li>
+              <strong>Развлечения и ужин:</strong> 18:45 - 21:00
+            </li>
           </ul>
         </div>
+
+        {/* Примечание */}
+        <p className="mt-6 italic font-lora text-[#4b2e2e]">
+          Наш вечер будет простым: без речей и тостов, без алкоголя — но с
+          тёплой атмосферой и вниманием к каждому, кто рядом.
+        </p>
       </div>
     </div>
   );
@@ -259,14 +287,18 @@ function SeatingPage() {
   );
   return (
     <div className="h-full w-full p-6 md:p-10 overflow-auto flex flex-col items-center">
-      <h2 className="text-3xl md:text-5xl mb-6 text-center">Рассадка гостей</h2>
+      <h2 className="text-3xl md:text-5xl mb-6 text-center text-[#6b4226]">
+        Рассадка гостей
+      </h2>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
         {tables.map((table, idx) => (
           <div
             key={idx}
             className="bg-white/80 border border-[#d9c2a9] rounded-2xl p-4 shadow-md flex flex-col items-center"
           >
-            <h3 className="font-semibold mb-2">Стол {idx + 1}</h3>
+            <h3 className="font-semibold mb-2 text-[#6b4226]">
+              Стол {idx + 1}
+            </h3>
             <ul className="text-sm md:text-base space-y-1">
               {table.map((guest, gIdx) => (
                 <li key={gIdx}>{guest}</li>
@@ -281,7 +313,7 @@ function SeatingPage() {
 
 function RsvpEmailPage({ onSubmitted }) {
   const [name, setName] = useState("");
-  const [guests, setGuests] = useState(1);
+  const [guests, setGuests] = useState();
   const [attend, setAttend] = useState("");
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
@@ -295,6 +327,7 @@ function RsvpEmailPage({ onSubmitted }) {
     e.preventDefault();
     setError("");
     if (!name.trim()) return setError("Пожалуйста, укажите имя");
+    if (!guests) return setError("Пожалуйста, укажите количество людей");
     if (!attend) return setError("Пожалуйста, выберите ответ");
 
     const templateParams = { name, attending: attend, guests, message };
@@ -309,7 +342,9 @@ function RsvpEmailPage({ onSubmitted }) {
 
   return (
     <div className="h-full flex flex-col items-center justify-center p-6 md:p-10">
-      <h2 className="text-2xl md:text-4xl text-center mb-6">Ваш Ответ</h2>
+      <h2 className="text-2xl md:text-4xl text-center mb-6 text-[#6b4226]">
+        Ваш Ответ
+      </h2>
       {!sent ? (
         <form
           onSubmit={submit}
@@ -325,6 +360,7 @@ function RsvpEmailPage({ onSubmitted }) {
           <input
             type="number"
             value={guests}
+            min={1}
             onChange={(e) => setGuests(e.target.value)}
             placeholder="Количество гостей"
             className="w-full rounded-xl border px-4 py-3 focus:border-[#8b5e3c]"
@@ -365,9 +401,13 @@ function AddressPage() {
   return (
     <div className="h-full flex flex-col items-center justify-center p-6 md:p-10">
       <MapPin className="h-10 w-10 text-[#6b4226]" />
-      <h2 className="mt-4 text-2xl md:text-4xl text-center">Где нас найти</h2>
-      <p className="mt-2 text-center">Wedding Hall "Selene"</p>
-      <p className="mt-2 text-center">충남 천안시 동남구 배울1길 35</p>
+      <h2 className="mt-4 text-2xl md:text-4xl text-center text-[#6b4226]">
+        Адрес
+      </h2>
+      <p className="mt-2 md:text-4xl text-center">Wedding Hall "Selene"</p>
+      <p className="mt-2 md:text-xl text-center">
+        충남 천안시 동남구 배울1길 35
+      </p>
       <div className="flex flex-col md:flex-row gap-4 mt-4">
         <a
           href="https://naver.me/xxFFYWmg"
