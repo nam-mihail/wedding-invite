@@ -241,7 +241,7 @@ function InvitationWithSchedulePage() {
           день.
         </p>
         <div className="mt-6">
-          <h3 className="font-semibold mb-2">Расписание мероприятия</h3>
+          <h2 className="font-semibold mb-2">Расписание мероприятия</h3>
           <ul className="space-y-2">
             <li>18:00 — Прибытие гостей</li>
             <li>18:15 — Начало венчания</li>
