@@ -48,25 +48,6 @@ export default function WeddingInviteBook() {
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
           >
-            {page !== 0 && (
-              <>
-                <div className="absolute inset-y-0 left-0 flex items-center">
-                  <NavButton
-                    direction="left"
-                    onClick={prev}
-                    disabled={page === 0}
-                  />
-                </div>
-                <div className="absolute inset-y-0 right-0 flex items-center">
-                  <NavButton
-                    direction="right"
-                    onClick={next}
-                    disabled={page === total - 1}
-                  />
-                </div>
-              </>
-            )}
-
             <AnimatePresence mode="wait">
               <motion.div
                 key={page}
@@ -160,25 +141,6 @@ function Footer({ page, total, prev, next }) {
   );
 }
 
-function NavButton({ direction, onClick, disabled }) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className="m-2 md:m-4 rounded-full shadow-sm bg-white/70 hover:bg-white disabled:opacity-40 flex items-center justify-center p-2"
-      aria-label={
-        direction === "left" ? "Предыдущая страница" : "Следующая страница"
-      }
-    >
-      {direction === "left" ? (
-        <ChevronLeft className="h-6 w-6" />
-      ) : (
-        <ChevronRight className="h-6 w-6" />
-      )}
-    </button>
-  );
-}
-
 // ---------------- Pages ----------------
 function CoverPage({ onNext }) {
   return (
@@ -245,8 +207,8 @@ function InvitationWithSchedulePage() {
         {/* Основной текст */}
         <p className="mt-4 text-base md:text-lg leading-relaxed font-lora text-[#4b2e2e]">
           С радостью и трепетом приглашаем Вас стать свидетелями нашего события,
-          нашей свадьбы, начала нашей новой главы. Разделите с нами этот
-          особенный и долгожданный день. <br />
+          свадьбы и начала новой главы. Разделите с нами этот особенный и
+          долгожданный день. <br />
           <span className="mt-2 block italic">С любовью~</span>
         </p>
 
@@ -370,7 +332,7 @@ function RsvpEmailPage({ onSubmitted }) {
             onChange={(e) => setAttend(e.target.value)}
             className="w-full p-3 border rounded-lg focus:outline-none focus:border-[#8b5e3c]"
           >
-            <option value="">Выберите ответ</option>
+            <option value="">Разделите с нами этот день?</option>
             <option value="yes">Да</option>
             <option value="no">Нет</option>
           </select>
