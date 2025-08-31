@@ -24,6 +24,18 @@ export default function WeddingInviteBook() {
     touchStartX.current = null;
   };
 
+  // --- Динамическая высота для мобильной клавиатуры ---
+  const [windowHeight, setWindowHeight] = useState(0); // Изначально 0, безопасно для SSR
+
+  useEffect(() => {
+    // Только на клиенте
+    setWindowHeight(window.innerHeight);
+
+    const handleResize = () => setWindowHeight(window.innerHeight);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     const handler = (e) => {
       if (e.key === "ArrowRight") next();
@@ -38,13 +50,16 @@ export default function WeddingInviteBook() {
   const goTo = (i) => setPage(Math.max(0, Math.min(total - 1, i)));
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#fdf6f0] via-white to-[#f5ebe1] flex items-center justify-center p-4 md:p-8">
-      <CardWrapper className="w-full max-w-3xl">
+    <div
+      style={{ height: windowHeight || "100vh" }} // fallback, если ещё не определено
+      className="w-full bg-gradient-to-b from-[#fdf6f0] via-white to-[#f5ebe1] flex items-center justify-center p-4 md:p-8"
+    >
+      <CardWrapper className="w-full max-w-3xl overflow-auto">
         <CardContentWrapper className="p-0">
           {page !== 0 && <Header page={page} total={total} goTo={goTo} />}
 
           <div
-            className="relative h-[70vh] md:h-[68vh] lg:h-[60vh] select-none"
+            className="relative h-[70vh] md:h-[68vh] lg:h-[60vh] select-none overflow-auto"
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
           >
@@ -75,7 +90,7 @@ export default function WeddingInviteBook() {
   );
 }
 
-// --- Components ---
+// ---------------- Components ----------------
 function CardWrapper({ children, className }) {
   return (
     <div
@@ -189,30 +204,23 @@ function CoverPage({ onNext }) {
 
 function InvitationWithSchedulePage() {
   return (
-    <div className="h-full overflow-y-auto p-6 md:p-10 flex justify-center">
+    <div className="h-full overflow-auto p-6 md:p-10 flex justify-center">
       <div className="max-w-2xl text-center">
-        {/* Символический акцент */}
         <div className="flex items-center justify-center gap-2 text-[#6b4226] mb-4">
           <CalendarHeart className="h-6 w-6" />
           <span className="uppercase tracking-widest text-sm md:text-xs">
             Счастливый день
           </span>
         </div>
-
-        {/* Заголовок */}
         <h2 className="font-playfair text-3xl md:text-4xl text-[#6b4226] leading-snug">
           Дорогие друзья, родные и близкие
         </h2>
-
-        {/* Основной текст */}
         <p className="mt-4 text-base md:text-lg leading-relaxed font-lora text-[#4b2e2e]">
           С радостью и трепетом приглашаем Вас стать свидетелями нашего события,
           свадьбы и начала новой главы. Разделите с нами этот особенный и
           долгожданный день. <br />
           <span className="mt-2 block italic">С любовью~</span>
         </p>
-
-        {/* Расписание */}
         <div className="mt-8 text-left bg-white/80 border border-[#d9c2a9] rounded-2xl p-6 shadow-md">
           <h3 className="font-playfair text-xl md:text-2xl text-center text-[#6b4226] mb-4">
             Расписание мероприятия
@@ -232,42 +240,10 @@ function InvitationWithSchedulePage() {
             </li>
           </ul>
         </div>
-
-        {/* Примечание */}
         <p className="mt-6 italic font-lora text-[#4b2e2e]">
           Наш вечер будет простым: без речей и тостов, без алкоголя — но с
           тёплой атмосферой и вниманием к каждому, кто рядом.
         </p>
-      </div>
-    </div>
-  );
-}
-
-function SeatingPage() {
-  const tables = Array.from({ length: 12 }, () =>
-    Array.from({ length: 7 }, (_, j) => `Гость ${j + 1}`)
-  );
-  return (
-    <div className="h-full w-full p-6 md:p-10 overflow-auto flex flex-col items-center">
-      <h2 className="text-3xl md:text-5xl mb-6 text-center text-[#6b4226]">
-        Рассадка гостей
-      </h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
-        {tables.map((table, idx) => (
-          <div
-            key={idx}
-            className="bg-white/80 border border-[#d9c2a9] rounded-2xl p-4 shadow-md flex flex-col items-center"
-          >
-            <h3 className="font-semibold mb-2 text-[#6b4226]">
-              Стол {idx + 1}
-            </h3>
-            <ul className="text-sm md:text-base space-y-1">
-              {table.map((guest, gIdx) => (
-                <li key={gIdx}>{guest}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
       </div>
     </div>
   );
@@ -303,7 +279,7 @@ function RsvpEmailPage({ onSubmitted }) {
   };
 
   return (
-    <div className="h-full flex flex-col items-center justify-center p-6 md:p-10">
+    <div className="h-full overflow-auto flex flex-col items-center justify-center p-6 md:p-10">
       <h2 className="text-2xl md:text-4xl text-center mb-6 text-[#6b4226]">
         Ваш Ответ
       </h2>
@@ -359,9 +335,39 @@ function RsvpEmailPage({ onSubmitted }) {
   );
 }
 
+function SeatingPage() {
+  const tables = Array.from({ length: 12 }, () =>
+    Array.from({ length: 7 }, (_, j) => `Гость ${j + 1}`)
+  );
+  return (
+    <div className="h-full overflow-auto w-full p-6 md:p-10 flex flex-col items-center">
+      <h2 className="text-3xl md:text-5xl mb-6 text-center text-[#6b4226]">
+        Рассадка гостей
+      </h2>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
+        {tables.map((table, idx) => (
+          <div
+            key={idx}
+            className="bg-white/80 border border-[#d9c2a9] rounded-2xl p-4 shadow-md flex flex-col items-center"
+          >
+            <h3 className="font-semibold mb-2 text-[#6b4226]">
+              Стол {idx + 1}
+            </h3>
+            <ul className="text-sm md:text-base space-y-1">
+              {table.map((guest, gIdx) => (
+                <li key={gIdx}>{guest}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function AddressPage() {
   return (
-    <div className="h-full flex flex-col items-center justify-center p-6 md:p-10">
+    <div className="h-full overflow-auto flex flex-col items-center justify-center p-6 md:p-10">
       <MapPin className="h-10 w-10 text-[#6b4226]" />
       <h2 className="mt-4 text-2xl md:text-4xl text-center text-[#6b4226]">
         Адрес
