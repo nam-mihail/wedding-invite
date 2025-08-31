@@ -9,6 +9,7 @@ import WeddingInviteBook from "../components/WeddingInviteBook";
     rel="stylesheet"
   ></link>
   <meta name="color-scheme" content="light"></meta>
+  <meta name="supported-color-schemes" content="light"></meta>
 </div>;
 
 export default function Home() {
