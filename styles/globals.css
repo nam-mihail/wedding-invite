@@ -5,7 +5,14 @@
   --foreground: #171717;
 }
 
+html {
+  color-scheme: light !important;
+  background-color: var(--background); /* основной фон */
+  -webkit-print-color-adjust: exact;
+}
+
 @media (prefers-color-scheme: dark) {
+  html,
   body {
     background-color: var(
       --background
