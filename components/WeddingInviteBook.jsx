@@ -332,7 +332,7 @@ function RsvpEmailPage({ onSubmitted }) {
             onChange={(e) => setAttend(e.target.value)}
             className="w-full p-3 border rounded-lg focus:outline-none focus:border-[#8b5e3c]"
           >
-            <option value="">Разделите с нами этот день?</option>
+            <option value="">Будете с нами?</option>
             <option value="yes">Да</option>
             <option value="no">Нет</option>
           </select>
