@@ -42,7 +42,6 @@ function useGuestNamesFromUrl() {
     return `${arr.slice(0, -1).join(", ")} и ${arr[arr.length - 1]}`;
   };
 
-  const greeting = guestNames.length === 1 ? "Дорогой" : "Дорогие";
   const displayName = guestNames.length ? formatNames(guestNames) : "гости";
   let mainText;
 
@@ -52,7 +51,7 @@ function useGuestNamesFromUrl() {
     mainText = `С радостью и трепетом приглашаем Вас стать свидетелями нашего события, свадьбы и начала новой главы. Разделите с нами этот особенный и долгожданный день.`;
   }
 
-  return { guestNames, greeting, displayName, mainText };
+  return { guestNames, displayName, mainText };
 }
 
 export default function WeddingInviteBook() {
@@ -86,8 +85,7 @@ export default function WeddingInviteBook() {
   const goTo = (i) => setPage(Math.max(0, Math.min(total - 1, i)));
 
   // --- Имена гостей из URL ---
-  const { guestNames, greeting, displayName, mainText } =
-    useGuestNamesFromUrl();
+  const { guestNames, displayName, mainText } = useGuestNamesFromUrl();
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#fdf6f0] via-white to-[#f5ebe1] flex items-center justify-center p-4 md:p-8">
@@ -121,15 +119,10 @@ export default function WeddingInviteBook() {
                   className="h-full w-full"
                 >
                   {page === 0 && (
-                    <CoverPage
-                      onNext={next}
-                      greeting={greeting}
-                      displayName={displayName}
-                    />
+                    <CoverPage onNext={next} displayName={displayName} />
                   )}
                   {page === 1 && (
                     <InvitationWithSchedulePage
-                      greeting={greeting}
                       displayName={displayName}
                       mainText={mainText}
                     />
@@ -137,7 +130,6 @@ export default function WeddingInviteBook() {
                   {page === 2 && (
                     <RsvpEmailPage
                       onSubmitted={() => next()}
-                      greeting={greeting}
                       displayName={displayName}
                     />
                   )}
@@ -272,7 +264,7 @@ function CoverPage({ onNext }) {
   );
 }
 
-function InvitationWithSchedulePage({ greeting, displayName, mainText }) {
+function InvitationWithSchedulePage({ displayName, mainText }) {
   return (
     <div className="h-full overflow-auto p-6 md:p-10 flex justify-center">
       <div className="max-w-2xl text-center">
@@ -283,7 +275,7 @@ function InvitationWithSchedulePage({ greeting, displayName, mainText }) {
           </span>
         </div>
         <h2 className="font-playfair text-3xl md:text-4xl text-[#6b4226] leading-snug">
-          {greeting} {displayName}
+          {displayName}
         </h2>
         <p className="mt-4 text-base md:text-lg leading-relaxed font-lora text-[#4b2e2e]">
           {mainText} <br />
@@ -357,7 +349,7 @@ function SeatingPage() {
   );
 }
 
-function RsvpEmailPage({ greeting, displayName, onSubmitted }) {
+function RsvpEmailPage({ displayName, onSubmitted }) {
   const [attend, setAttend] = useState("");
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
@@ -395,12 +387,12 @@ function RsvpEmailPage({ greeting, displayName, onSubmitted }) {
           className="w-full max-w-md flex flex-col gap-5 bg-white/90 p-6 rounded-2xl shadow-lg"
         >
           {/* Статическая надпись с именами гостей */}
-          <div className="text-center text-lg md:text-xl font-medium mb-2">
-            {greeting} {displayName}!
-          </div>
+          <h2 className="text-center text-lg md:text-3xl font-medium mb-2 ">
+            {displayName}
+          </h2>
 
           <label className="text-sm md:text-base font-medium">
-            Сможете ли вы присутствовать на свадьбе?
+            Сможете ли Вы присутствовать на свадьбе?
           </label>
           <select
             value={attend}
@@ -409,7 +401,7 @@ function RsvpEmailPage({ greeting, displayName, onSubmitted }) {
           >
             <option value="">Выберите вариант</option>
             <option value="yes">Да, с радостью</option>
-            <option value="no">К сожалению, не смогу</option>
+            <option value="no">К сожалению, нет</option>
           </select>
 
           <textarea
