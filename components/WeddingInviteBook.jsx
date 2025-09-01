@@ -9,10 +9,57 @@ import {
 } from "lucide-react";
 import emailjs from "@emailjs/browser";
 
+// --- Хук: имена гостей из URL ---
+function useGuestNamesFromUrl() {
+  const [guestNames, setGuestNames] = useState([]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return; // на всякий случай для SSR
+    const params = new URLSearchParams(window.location.search);
+
+    // Поддержка нескольких схем
+    const combined = params.get("guests"); // "Иван,Мария"
+    const name1 = params.get("name1") || params.get("guest1");
+    const name2 = params.get("name2") || params.get("guest2");
+
+    let names = [];
+    if (combined) {
+      names = combined
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+    } else {
+      names = [name1, name2].map((s) => s?.trim()).filter(Boolean);
+    }
+
+    setGuestNames(names);
+  }, []);
+
+  // Умный формат списка имен: "Иван", "Иван и Мария", "Иван, Мария и Алексей"
+  const formatNames = (arr) => {
+    if (arr.length <= 1) return arr[0] || "";
+    if (arr.length === 2) return `${arr[0]} и ${arr[1]}`;
+    return `${arr.slice(0, -1).join(", ")} и ${arr[arr.length - 1]}`;
+  };
+
+  const greeting = guestNames.length === 1 ? "Дорогой" : "Дорогие";
+  const displayName = guestNames.length ? formatNames(guestNames) : "гости";
+  let mainText;
+
+  if (guestNames.length === 1) {
+    mainText = `С радостью и трепетом приглашаем Вас стать свидетелем нашего события, свадьбы и начала новой главы. Разделите с нами этот особенный и долгожданный день.`;
+  } else if (guestNames.length > 1) {
+    mainText = `С радостью и трепетом приглашаем Вас стать свидетелями нашего события, свадьбы и начала новой главы. Разделите с нами этот особенный и долгожданный день.`;
+  }
+
+  return { guestNames, greeting, displayName, mainText };
+}
+
 export default function WeddingInviteBook() {
   const [page, setPage] = useState(0);
   const total = 5;
 
+  // --- свайпы ---
   const touchStartX = useRef(null);
   const onTouchStart = (e) =>
     (touchStartX.current = e.changedTouches[0].clientX);
@@ -24,18 +71,7 @@ export default function WeddingInviteBook() {
     touchStartX.current = null;
   };
 
-  // --- Динамическая высота для мобильной клавиатуры ---
-  const [windowHeight, setWindowHeight] = useState(0); // Изначально 0, безопасно для SSR
-
-  useEffect(() => {
-    // Только на клиенте
-    setWindowHeight(window.innerHeight);
-
-    const handleResize = () => setWindowHeight(window.innerHeight);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
+  // --- стрелки на клавиатуре ---
   useEffect(() => {
     const handler = (e) => {
       if (e.key === "ArrowRight") next();
@@ -49,48 +85,80 @@ export default function WeddingInviteBook() {
   const prev = () => setPage((p) => Math.max(p - 1, 0));
   const goTo = (i) => setPage(Math.max(0, Math.min(total - 1, i)));
 
+  // --- Имена гостей из URL ---
+  const { guestNames, greeting, displayName, mainText } =
+    useGuestNamesFromUrl();
+
   return (
-    <div
-      style={{ height: windowHeight || "100vh" }} // fallback, если ещё не определено
-      className="w-full bg-gradient-to-b from-[#fdf6f0] via-white to-[#f5ebe1] flex items-center justify-center p-4 md:p-8"
-    >
-      <CardWrapper className="w-full max-w-3xl overflow-auto">
-        <CardContentWrapper className="p-0">
-          {page !== 0 && <Header page={page} total={total} goTo={goTo} />}
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#fdf6f0] via-white to-[#f5ebe1] flex items-center justify-center p-4 md:p-8">
+      {guestNames.length === 0 ? (
+        <div className="text-center">
+          <h2 className="text-2xl md:text-4xl font-semibold mb-4">
+            Ссылка некорректна
+          </h2>
+          <p>
+            Похоже, вы перешли по ссылке без необходимых параметров. Пожалуйста,
+            свяжитесь с организаторами.
+          </p>
+        </div>
+      ) : (
+        <CardWrapper className="w-full max-w-3xl">
+          <CardContentWrapper className="p-0">
+            {page !== 0 && <Header page={page} total={total} goTo={goTo} />}
 
-          <div
-            className="relative h-[70vh] md:h-[68vh] lg:h-[60vh] select-none overflow-auto"
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={page}
-                initial={{ opacity: 0, x: 40, rotateY: 10 }}
-                animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                exit={{ opacity: 0, x: -40, rotateY: -10 }}
-                transition={{ duration: 0.45, ease: "easeOut" }}
-                className="h-full w-full"
-              >
-                {page === 0 && <CoverPage onNext={next} />}
-                {page === 1 && <InvitationWithSchedulePage />}
-                {page === 2 && <RsvpEmailPage onSubmitted={() => next()} />}
-                {page === 3 && <SeatingPage />}
-                {page === 4 && <AddressPage />}
-              </motion.div>
-            </AnimatePresence>
-          </div>
+            <div
+              className="relative h-[70vh] md:h-[68vh] lg:h-[60vh] select-none"
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={page}
+                  initial={{ opacity: 0, x: 40, rotateY: 10 }}
+                  animate={{ opacity: 1, x: 0, rotateY: 0 }}
+                  exit={{ opacity: 0, x: -40, rotateY: -10 }}
+                  transition={{ duration: 0.45, ease: "easeOut" }}
+                  className="h-full w-full"
+                >
+                  {page === 0 && (
+                    <CoverPage
+                      onNext={next}
+                      greeting={greeting}
+                      displayName={displayName}
+                    />
+                  )}
+                  {page === 1 && (
+                    <InvitationWithSchedulePage
+                      greeting={greeting}
+                      displayName={displayName}
+                      mainText={mainText}
+                    />
+                  )}
+                  {page === 2 && (
+                    <RsvpEmailPage
+                      onSubmitted={() => next()}
+                      greeting={greeting}
+                      displayName={displayName}
+                    />
+                  )}
+                  {page === 3 && <SeatingPage />}
+                  {page === 4 && <AddressPage />}
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
-          {page !== 0 && (
-            <Footer page={page} total={total} prev={prev} next={next} />
-          )}
-        </CardContentWrapper>
-      </CardWrapper>
+            {page !== 0 && (
+              <Footer page={page} total={total} prev={prev} next={next} />
+            )}
+          </CardContentWrapper>
+        </CardWrapper>
+      )}
     </div>
   );
 }
 
-// ---------------- Components ----------------
+// --- Components ---
+
 function CardWrapper({ children, className }) {
   return (
     <div
@@ -101,7 +169,8 @@ function CardWrapper({ children, className }) {
   );
 }
 
-function CardContentWrapper({ children, className }) {
+function CardContentWrapper({ children, className = "" }) {
+  // ✅ фикс твоей ошибки шаблонной строки
   return <div className={`p-4 md:p-6 ${className}`}>{children}</div>;
 }
 
@@ -157,6 +226,7 @@ function Footer({ page, total, prev, next }) {
 }
 
 // ---------------- Pages ----------------
+
 function CoverPage({ onNext }) {
   return (
     <div className="w-full h-full flex flex-col bg-[#fdf6f0]">
@@ -202,7 +272,7 @@ function CoverPage({ onNext }) {
   );
 }
 
-function InvitationWithSchedulePage() {
+function InvitationWithSchedulePage({ greeting, displayName, mainText }) {
   return (
     <div className="h-full overflow-auto p-6 md:p-10 flex justify-center">
       <div className="max-w-2xl text-center">
@@ -213,12 +283,10 @@ function InvitationWithSchedulePage() {
           </span>
         </div>
         <h2 className="font-playfair text-3xl md:text-4xl text-[#6b4226] leading-snug">
-          Дорогие друзья, родные и близкие
+          {greeting} {displayName}
         </h2>
         <p className="mt-4 text-base md:text-lg leading-relaxed font-lora text-[#4b2e2e]">
-          С радостью и трепетом приглашаем Вас стать свидетелями нашего события,
-          свадьбы и начала новой главы. Разделите с нами этот особенный и
-          долгожданный день. <br />
+          {mainText} <br />
           <span className="mt-2 block italic">С любовью~</span>
         </p>
         <div className="mt-8 text-left bg-white/80 border border-[#d9c2a9] rounded-2xl p-6 shadow-md">
@@ -249,9 +317,47 @@ function InvitationWithSchedulePage() {
   );
 }
 
-function RsvpEmailPage({ onSubmitted }) {
-  const [name, setName] = useState("");
-  const [guests, setGuests] = useState();
+function SeatingPage() {
+  const tables = Array.from({ length: 12 }, () =>
+    Array.from({ length: 7 }, (_, j) => `Гость ${j + 1}`)
+  );
+
+  return (
+    <div className="h-full w-full p-6 md:p-10 overflow-auto flex flex-col items-center relative">
+      <h2 className="text-3xl md:text-5xl mb-6 text-center text-[#6b4226]">
+        Рассадка гостей
+      </h2>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
+        {tables.map((table, idx) => (
+          <div
+            key={idx}
+            className="bg-white/80 border border-[#d9c2a9] rounded-2xl p-4 shadow-md flex flex-col items-center"
+          >
+            <h3 className="font-semibold mb-2">Стол {idx + 1}</h3>
+            <ul className="text-sm md:text-base space-y-1">
+              {table.map((guest, gIdx) => (
+                <li key={gIdx}>{guest}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      {/* --- Затемняющий слой с сообщением --- */}
+      <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center p-6 rounded-2xl">
+        <h3 className="text-xl md:text-3xl font-semibold mb-2 text-[#6b4226]">
+          Рассадка гостей
+        </h3>
+        <p className="text-center text-sm md:text-lg">
+          Рассадка будет доступна позже. Следите за обновлениями!
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function RsvpEmailPage({ greeting, displayName, onSubmitted }) {
   const [attend, setAttend] = useState("");
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
@@ -264,11 +370,10 @@ function RsvpEmailPage({ onSubmitted }) {
   const submit = (e) => {
     e.preventDefault();
     setError("");
-    if (!name.trim()) return setError("Пожалуйста, укажите имя");
-    if (!guests) return setError("Пожалуйста, укажите количество людей");
+
     if (!attend) return setError("Пожалуйста, выберите ответ");
 
-    const templateParams = { name, attending: attend, guests, message };
+    const templateParams = { name: displayName, attending: attend, message };
     emailjs
       .send("service_svtyp46", "template_s457txe", templateParams)
       .then(() => {
@@ -279,46 +384,43 @@ function RsvpEmailPage({ onSubmitted }) {
   };
 
   return (
-    <div className="h-full overflow-auto flex flex-col items-center justify-center p-6 md:p-10">
+    <div className="h-full flex flex-col items-center justify-center p-6 md:p-10">
       <h2 className="text-2xl md:text-4xl text-center mb-6 text-[#6b4226]">
         Ваш Ответ
       </h2>
+
       {!sent ? (
         <form
           onSubmit={submit}
           className="w-full max-w-md flex flex-col gap-5 bg-white/90 p-6 rounded-2xl shadow-lg"
         >
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Имя"
-            className="w-full p-3 border rounded-lg focus:outline-none focus:border-[#8b5e3c]"
-          />
-          <input
-            type="number"
-            value={guests}
-            min={1}
-            onChange={(e) => setGuests(e.target.value)}
-            placeholder="Количество гостей"
-            className="w-full rounded-xl border px-4 py-3 focus:border-[#8b5e3c]"
-          />
+          {/* Статическая надпись с именами гостей */}
+          <div className="text-center text-lg md:text-xl font-medium mb-2">
+            {greeting} {displayName}!
+          </div>
+
+          <label className="text-sm md:text-base font-medium">
+            Сможете ли вы присутствовать на свадьбе?
+          </label>
           <select
             value={attend}
             onChange={(e) => setAttend(e.target.value)}
             className="w-full p-3 border rounded-lg focus:outline-none focus:border-[#8b5e3c]"
           >
-            <option value="">Будете с нами?</option>
-            <option value="yes">Да</option>
-            <option value="no">Нет</option>
+            <option value="">Выберите вариант</option>
+            <option value="yes">Да, с радостью</option>
+            <option value="no">К сожалению, не смогу</option>
           </select>
+
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Сообщение (по желанию)"
             className="w-full p-3 border rounded-lg focus:outline-none focus:border-[#8b5e3c] h-24 resize-none"
           />
+
           {error && <div className="text-red-600 text-sm">{error}</div>}
+
           <button
             type="submit"
             className="w-full py-3 bg-[#8b5e3c] text-white rounded-2xl hover:bg-[#a9745a] font-semibold"
@@ -331,36 +433,6 @@ function RsvpEmailPage({ onSubmitted }) {
           Спасибо! Ваш ответ отправлен.
         </div>
       )}
-    </div>
-  );
-}
-
-function SeatingPage() {
-  const tables = Array.from({ length: 12 }, () =>
-    Array.from({ length: 7 }, (_, j) => `Гость ${j + 1}`)
-  );
-  return (
-    <div className="h-full overflow-auto w-full p-6 md:p-10 flex flex-col items-center">
-      <h2 className="text-3xl md:text-5xl mb-6 text-center text-[#6b4226]">
-        Рассадка гостей
-      </h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
-        {tables.map((table, idx) => (
-          <div
-            key={idx}
-            className="bg-white/80 border border-[#d9c2a9] rounded-2xl p-4 shadow-md flex flex-col items-center"
-          >
-            <h3 className="font-semibold mb-2 text-[#6b4226]">
-              Стол {idx + 1}
-            </h3>
-            <ul className="text-sm md:text-base space-y-1">
-              {table.map((guest, gIdx) => (
-                <li key={gIdx}>{guest}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
