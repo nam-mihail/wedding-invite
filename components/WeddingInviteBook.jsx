@@ -310,7 +310,7 @@ function InvitationWithSchedulePage({ displayName, mainText }) {
 }
 
 function SeatingPage() {
-  const tables = Array.from({ length: 12 }, () =>
+  const tables = Array.from({ length: 6 }, () =>
     Array.from({ length: 7 }, (_, j) => `Гость ${j + 1}`)
   );
 
