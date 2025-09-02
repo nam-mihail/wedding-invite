@@ -8,30 +8,46 @@ import {
   Heart,
 } from "lucide-react";
 import emailjs from "@emailjs/browser";
+import CryptoJS from "crypto-js";
+
+const SECRET_KEY = "my_super_secret_key"; // Секретный ключ
 
 // --- Хук: имена гостей из URL ---
 function useGuestNamesFromUrl() {
   const [guestNames, setGuestNames] = useState([]);
+
+  const decrypt = (cipherText) => {
+    try {
+      const bytes = CryptoJS.AES.decrypt(cipherText, SECRET_KEY);
+      return bytes.toString(CryptoJS.enc.Utf8) || null;
+    } catch {
+      return null;
+    }
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return; // на всякий случай для SSR
     const params = new URLSearchParams(window.location.search);
 
     // Поддержка нескольких схем
-    const combined = params.get("guests"); // "Иван,Мария"
+    const combinedEncrypted = params.get("guests"); // "Иван,Мария"
     const name1 = params.get("name1") || params.get("guest1");
     const name2 = params.get("name2") || params.get("guest2");
 
     let names = [];
-    if (combined) {
-      names = combined
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
-    } else {
-      names = [name1, name2].map((s) => s?.trim()).filter(Boolean);
+    for (let [key, value] of params.entries()) {
+      const decryptedKey = decrypt(decodeURIComponent(key));
+      if (decryptedKey === "guests") {
+        const decryptedValue = decrypt(decodeURIComponent(value));
+        if (decryptedValue) {
+          names = decryptedValue
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean);
+        }
+        break; // нашли параметр, можно прервать цикл
+      }
     }
-
     setGuestNames(names);
   }, []);
 
@@ -56,7 +72,7 @@ function useGuestNamesFromUrl() {
 
 export default function WeddingInviteBook() {
   const [page, setPage] = useState(0);
-  const total = 5;
+  const total = 6;
 
   // --- свайпы ---
   const touchStartX = useRef(null);
@@ -134,7 +150,8 @@ export default function WeddingInviteBook() {
                     />
                   )}
                   {page === 3 && <SeatingPage />}
-                  {page === 4 && <AddressPage />}
+                  {page === 4 && <VideoGreetingPage />}
+                  {page === 5 && <AddressPage />}
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -310,12 +327,13 @@ function InvitationWithSchedulePage({ displayName, mainText }) {
 }
 
 function SeatingPage() {
-  const tables = Array.from({ length: 6 }, () =>
+  const tables = Array.from({ length: 12 }, () =>
     Array.from({ length: 7 }, (_, j) => `Гость ${j + 1}`)
   );
 
   return (
-    <div className="h-full w-full p-6 md:p-10 overflow-auto flex flex-col items-center relative">
+    //add relative
+    <div className="h-full w-full p-6 md:p-10 overflow-auto flex flex-col items-center">
       <h2 className="text-3xl md:text-5xl mb-6 text-center text-[#6b4226]">
         Рассадка гостей
       </h2>
@@ -457,6 +475,83 @@ function AddressPage() {
         >
           Открыть в Kakao Map
         </a>
+      </div>
+    </div>
+  );
+}
+
+function VideoGreetingPage() {
+  return (
+    <div className="h-full w-full p-6 md:p-10 flex flex-col items-center justify-start overflow-auto bg-gradient-to-b from-[#f5ebe1] to-[#fdf6f0]">
+      <h2 className="text-3xl md:text-5xl mb-6 text-center text-[#6b4226]">
+        Видео-поздравление (по желанию)
+      </h2>
+
+      <div className="flex flex-col md:flex-row w-full max-w-5xl gap-6">
+        {/* --- Левая часть: инструкция --- */}
+        <div className="flex-1 bg-white/90 border border-[#d9c2a9] rounded-2xl p-6 shadow-md max-h-[60vh] overflow-auto">
+          <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#6b4226]">
+            Опросник для свадебного видео-поздравления
+          </h3>
+          <p className="mb-4 text-sm md:text-base italic text-[#4b2e2e]">
+            Это видео-поздравление не обязательно. Если хотите, вы можете
+            записать своё послание молодожёнам. <br />
+            <span className="font-semibold">
+              Видео должно быть горизонтальным с разрешением 16:9.
+            </span>
+          </p>
+          <ol className="list-decimal list-inside text-[#4b2e2e] space-y-3 text-sm md:text-base">
+            <li>
+              Что бы вы хотели пожелать или просто сказать молодожёнам в день их
+              свадьбы? (Можно кратко или развернуто, от души!)
+            </li>
+            <li>Что вы можете сказать о женихе и невесте?</li>
+            <li>
+              Какие приятные воспоминания или истории вас связывают с одним из
+              молодожёнов или с обоими? (Смешные, трогательные или просто
+              памятные моменты)
+            </li>
+            <li>
+              Ваше свадебное напутствие или совет на будущее: (Например: секрет
+              счастливого брака, как справляться с трудностями и т.д.)
+            </li>
+          </ol>
+          <p className="mt-4 text-sm md:text-base italic text-[#4b2e2e]">
+            Пожалуйста, отвечайте на вопросы искренне и не принужденно, можно с
+            юмором, главное — от души. Если на какой-то вопрос не можете
+            ответить, просто пропустите его.
+          </p>
+          <p className="mt-4 text-sm md:text-base font-medium text-[#6b4226]">
+            Отправить видео до:{" "}
+            <span className="font-semibold">30 сентября 2025</span>
+          </p>
+        </div>
+
+        {/* --- Правая часть: ссылка на Telegram --- */}
+        <div className="flex-1 flex flex-col items-center justify-center bg-white/90 border border-[#d9c2a9] rounded-2xl p-6 shadow-md">
+          <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#6b4226]">
+            Куда отправить видео
+          </h3>
+          <a
+            href="https://t.me/luna_lina02" // <-- вставь свой Telegram username или ссылку на чат
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#8b5e3c] text-white font-semibold hover:bg-[#a9745a] transition"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 0C5.372 0 0 5.373 0 12c0 5.635 3.883 10.33 9.063 11.644.663.12.906-.288.906-.637 0-.313-.012-1.144-.017-2.25-3.685.802-4.462-1.775-4.462-1.775-.601-1.53-1.467-1.936-1.467-1.936-1.2-.82.091-.803.091-.803 1.328.093 2.027 1.36 2.027 1.36 1.178 2.016 3.088 1.434 3.842 1.096.12-.853.462-1.434.84-1.764-2.94-.336-6.033-1.47-6.033-6.54 0-1.444.516-2.625 1.36-3.552-.136-.337-.59-1.694.128-3.534 0 0 1.11-.356 3.64 1.355A12.77 12.77 0 0112 5.802c1.125.005 2.26.152 3.318.447 2.53-1.712 3.64-1.355 3.64-1.355.72 1.84.264 3.197.128 3.534.844.927 1.36 2.108 1.36 3.552 0 5.088-3.096 6.198-6.045 6.534.474.408.896 1.218.896 2.456 0 1.774-.016 3.2-.016 3.632 0 .352.24.765.918.635C20.118 22.33 24 17.635 24 12c0-6.627-5.373-12-12-12z" />
+            </svg>
+            Написать в Telegram
+          </a>
+          <p className="text-center text-sm md:text-base text-[#4b2e2e] mt-4">
+            Нажмите кнопку, чтобы перейти в Telegram
+          </p>
+        </div>
       </div>
     </div>
   );
