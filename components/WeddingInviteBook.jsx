@@ -9,12 +9,12 @@ import {
 } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import CryptoJS from "crypto-js";
-import Helmet from "react-helmet";
+import Head from "next/head";
 
 const SECRET_KEY = "my_super_secret_key"; // Секретный ключ
 
-// --- Хук: имена гостей из URL ---
-function useGuestNamesFromUrl() {
+// --- Хук для декодирования имен гостей ---
+function useGuestNamesFromQuery(queryString) {
   const [guestNames, setGuestNames] = useState([]);
 
   const decrypt = (cipherText) => {
@@ -27,14 +27,7 @@ function useGuestNamesFromUrl() {
   };
 
   useEffect(() => {
-    if (typeof window === "undefined") return; // на всякий случай для SSR
-    const params = new URLSearchParams(window.location.search);
-
-    // Поддержка нескольких схем
-    const combinedEncrypted = params.get("guests"); // "Иван,Мария"
-    const name1 = params.get("name1") || params.get("guest1");
-    const name2 = params.get("name2") || params.get("guest2");
-
+    const params = new URLSearchParams(queryString);
     let names = [];
     for (let [key, value] of params.entries()) {
       const decryptedKey = decrypt(decodeURIComponent(key));
@@ -46,13 +39,12 @@ function useGuestNamesFromUrl() {
             .map((s) => s.trim())
             .filter(Boolean);
         }
-        break; // нашли параметр, можно прервать цикл
+        break;
       }
     }
     setGuestNames(names);
-  }, []);
+  }, [queryString]);
 
-  // Умный формат списка имен: "Иван", "Иван и Мария", "Иван, Мария и Алексей"
   const formatNames = (arr) => {
     if (arr.length <= 1) return arr[0] || "";
     if (arr.length === 2) return `${arr[0]} и ${arr[1]}`;
@@ -60,18 +52,15 @@ function useGuestNamesFromUrl() {
   };
 
   const displayName = guestNames.length ? formatNames(guestNames) : "гости";
-  let mainText;
-
-  if (guestNames.length === 1) {
-    mainText = `С радостью и трепетом приглашаем Вас стать свидетелем нашего события, свадьбы и начала новой главы. Разделите с нами этот особенный и долгожданный день.`;
-  } else if (guestNames.length > 1) {
-    mainText = `С радостью и трепетом приглашаем Вас стать свидетелями нашего события, свадьбы и начала новой главы. Разделите с нами этот особенный и долгожданный день.`;
-  }
+  let mainText =
+    guestNames.length === 1
+      ? `С радостью и трепетом приглашаем Вас стать свидетелем нашего события, свадьбы и начала новой главы. Разделите с нами этот особенный и долгожданный день.`
+      : `С радостью и трепетом приглашаем Вас стать свидетелями нашего события, свадьбы и начала новой главы. Разделите с нами этот особенный и долгожданный день.`;
 
   return { guestNames, displayName, mainText };
 }
 
-export default function WeddingInviteBook() {
+export default function WeddingInviteBook({ fullUrl, queryString }) {
   const [page, setPage] = useState(0);
   const total = 6;
 
@@ -102,12 +91,12 @@ export default function WeddingInviteBook() {
   const goTo = (i) => setPage(Math.max(0, Math.min(total - 1, i)));
 
   // --- Имена гостей из URL ---
-  const { guestNames, displayName, mainText } = useGuestNamesFromUrl();
+  const { guestNames, displayName, mainText } = useGuestNamesFromQuery();
 
   return (
     <>
       {/* --- Open Graph / SEO мета-теги --- */}
-      <Helmet>
+      <Head>
         <title>Приглашение на свадьбу Михаила & Валерии</title>
         <meta
           name="description"
@@ -125,7 +114,8 @@ export default function WeddingInviteBook() {
         />
         <meta property="og:image" content="/banner.png" />
         <meta property="og:type" content="website" />
-      </Helmet>
+        <meta property="og:url" content={fullUrl} />
+      </Head>
       <div className="min-h-screen w-full bg-gradient-to-b from-[#fdf6f0] via-white to-[#f5ebe1] flex items-center justify-center p-4 md:p-8">
         {guestNames.length === 0 ? (
           <div className="text-center">
@@ -188,7 +178,15 @@ export default function WeddingInviteBook() {
     </>
   );
 }
+// --- SERVER SIDE ---
+export async function getServerSideProps(context) {
+  const queryString = context.req.url.split("?")[1] || "";
+  const fullUrl = `https://${context.req.headers.host}${context.req.url}`;
 
+  return {
+    props: { fullUrl, queryString },
+  };
+}
 // --- Components ---
 
 function CardWrapper({ children, className }) {
