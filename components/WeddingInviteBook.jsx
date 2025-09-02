@@ -125,7 +125,6 @@ export default function WeddingInviteBook() {
         />
         <meta property="og:image" content="/banner.png" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={window.location.href} />
       </Helmet>
       <div className="min-h-screen w-full bg-gradient-to-b from-[#fdf6f0] via-white to-[#f5ebe1] flex items-center justify-center p-4 md:p-8">
         {guestNames.length === 0 ? (
