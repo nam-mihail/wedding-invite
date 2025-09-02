@@ -108,7 +108,29 @@ export default function WeddingInviteBook() {
   return (
     <>
       {/* --- Open Graph / SEO мета-теги --- */}
+      <Helmet>
+        <title>Приглашение на свадьбу Михаила & Валерии</title>
+        <meta
+          name="description"
+          content="Приглашение на свадьбу Михаила и Валерии — 4 октября 2025. Разделите с нами этот особенный день!"
+        />
 
+        {/* Open Graph */}
+        <meta
+          property="og:title"
+          content="Приглашение на свадьбу Михаила & Валерии"
+        />
+        <meta
+          property="og:description"
+          content="Приглашение на свадьбу Михаила и Валерии — 4 октября 2025. Разделите с нами этот особенный день!"
+        />
+        <meta property="og:image" content="/banner.png" />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:url"
+          content={typeof window !== "undefined" ? window.location.href : ""}
+        />
+      </Helmet>
       <div className="min-h-screen w-full bg-gradient-to-b from-[#fdf6f0] via-white to-[#f5ebe1] flex items-center justify-center p-4 md:p-8">
         {guestNames.length === 0 ? (
           <div className="text-center">
