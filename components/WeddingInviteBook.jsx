@@ -89,6 +89,7 @@ export default function WeddingInviteBook() {
 
   // --- стрелки на клавиатуре ---
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const handler = (e) => {
       if (e.key === "ArrowRight") next();
       if (e.key === "ArrowLeft") prev();
@@ -125,7 +126,10 @@ export default function WeddingInviteBook() {
         />
         <meta property="og:image" content="/banner.png" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" />
+        <meta
+          property="og:url"
+          content={typeof window !== "undefined" ? window.location.href : ""}
+        />
       </Helmet>
       <div className="min-h-screen w-full bg-gradient-to-b from-[#fdf6f0] via-white to-[#f5ebe1] flex items-center justify-center p-4 md:p-8">
         {guestNames.length === 0 ? (
