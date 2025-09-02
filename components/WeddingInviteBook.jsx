@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import CryptoJS from "crypto-js";
+import Helmet from "react-helmet";
 
 const SECRET_KEY = "my_super_secret_key"; // Секретный ключ
 
@@ -104,65 +105,88 @@ export default function WeddingInviteBook() {
   const { guestNames, displayName, mainText } = useGuestNamesFromUrl();
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#fdf6f0] via-white to-[#f5ebe1] flex items-center justify-center p-4 md:p-8">
-      {guestNames.length === 0 ? (
-        <div className="text-center">
-          <h2 className="text-2xl md:text-4xl font-semibold mb-4">
-            Ссылка некорректна
-          </h2>
-          <p>
-            Похоже, вы перешли по ссылке без необходимых параметров. Пожалуйста,
-            свяжитесь с организаторами.
-          </p>
-        </div>
-      ) : (
-        <CardWrapper className="w-full max-w-3xl">
-          <CardContentWrapper className="p-0">
-            {page !== 0 && <Header page={page} total={total} goTo={goTo} />}
+    <>
+      {/* --- Open Graph / SEO мета-теги --- */}
+      <Helmet>
+        <title>Приглашение на свадьбу Михаила & Валерии</title>
+        <meta
+          name="description"
+          content="Приглашение на свадьбу Михаила и Валерии — 4 октября 2025. Разделите с нами этот особенный день!"
+        />
 
-            <div
-              className="relative h-[70vh] md:h-[68vh] lg:h-[60vh] select-none"
-              onTouchStart={onTouchStart}
-              onTouchEnd={onTouchEnd}
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={page}
-                  initial={{ opacity: 0, x: 40, rotateY: 10 }}
-                  animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                  exit={{ opacity: 0, x: -40, rotateY: -10 }}
-                  transition={{ duration: 0.45, ease: "easeOut" }}
-                  className="h-full w-full"
-                >
-                  {page === 0 && (
-                    <CoverPage onNext={next} displayName={displayName} />
-                  )}
-                  {page === 1 && (
-                    <InvitationWithSchedulePage
-                      displayName={displayName}
-                      mainText={mainText}
-                    />
-                  )}
-                  {page === 2 && (
-                    <RsvpEmailPage
-                      onSubmitted={() => next()}
-                      displayName={displayName}
-                    />
-                  )}
-                  {page === 3 && <SeatingPage />}
-                  {page === 4 && <VideoGreetingPage />}
-                  {page === 5 && <AddressPage />}
-                </motion.div>
-              </AnimatePresence>
-            </div>
+        {/* Open Graph */}
+        <meta
+          property="og:title"
+          content="Приглашение на свадьбу Михаила & Валерии"
+        />
+        <meta
+          property="og:description"
+          content="Приглашение на свадьбу Михаила и Валерии — 4 октября 2025. Разделите с нами этот особенный день!"
+        />
+        <meta property="og:image" content="/banner.png" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.href} />
+      </Helmet>
+      <div className="min-h-screen w-full bg-gradient-to-b from-[#fdf6f0] via-white to-[#f5ebe1] flex items-center justify-center p-4 md:p-8">
+        {guestNames.length === 0 ? (
+          <div className="text-center">
+            <h2 className="text-2xl md:text-4xl font-semibold mb-4">
+              Ссылка некорректна
+            </h2>
+            <p>
+              Похоже, вы перешли по ссылке без необходимых параметров.
+              Пожалуйста, свяжитесь с организаторами.
+            </p>
+          </div>
+        ) : (
+          <CardWrapper className="w-full max-w-3xl">
+            <CardContentWrapper className="p-0">
+              {page !== 0 && <Header page={page} total={total} goTo={goTo} />}
 
-            {page !== 0 && (
-              <Footer page={page} total={total} prev={prev} next={next} />
-            )}
-          </CardContentWrapper>
-        </CardWrapper>
-      )}
-    </div>
+              <div
+                className="relative h-[70vh] md:h-[68vh] lg:h-[60vh] select-none"
+                onTouchStart={onTouchStart}
+                onTouchEnd={onTouchEnd}
+              >
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={page}
+                    initial={{ opacity: 0, x: 40, rotateY: 10 }}
+                    animate={{ opacity: 1, x: 0, rotateY: 0 }}
+                    exit={{ opacity: 0, x: -40, rotateY: -10 }}
+                    transition={{ duration: 0.45, ease: "easeOut" }}
+                    className="h-full w-full"
+                  >
+                    {page === 0 && (
+                      <CoverPage onNext={next} displayName={displayName} />
+                    )}
+                    {page === 1 && (
+                      <InvitationWithSchedulePage
+                        displayName={displayName}
+                        mainText={mainText}
+                      />
+                    )}
+                    {page === 2 && (
+                      <RsvpEmailPage
+                        onSubmitted={() => next()}
+                        displayName={displayName}
+                      />
+                    )}
+                    {page === 3 && <SeatingPage />}
+                    {page === 4 && <VideoGreetingPage />}
+                    {page === 5 && <AddressPage />}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {page !== 0 && (
+                <Footer page={page} total={total} prev={prev} next={next} />
+              )}
+            </CardContentWrapper>
+          </CardWrapper>
+        )}
+      </div>
+    </>
   );
 }
 
