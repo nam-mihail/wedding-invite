@@ -76,16 +76,16 @@ export default function WeddingInviteBook() {
   const total = 6;
 
   // --- свайпы ---
-  const touchStartX = useRef(null);
-  const onTouchStart = (e) =>
-    (touchStartX.current = e.changedTouches[0].clientX);
-  const onTouchEnd = (e) => {
-    if (touchStartX.current == null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    if (dx > 50) prev();
-    if (dx < -50) next();
-    touchStartX.current = null;
-  };
+  // const touchStartX = useRef(null);
+  // const onTouchStart = (e) =>
+  //   (touchStartX.current = e.changedTouches[0].clientX);
+  // const onTouchEnd = (e) => {
+  //   if (touchStartX.current == null) return;
+  //   const dx = e.changedTouches[0].clientX - touchStartX.current;
+  //   if (dx > 50) prev();
+  //   if (dx < -50) next();
+  //   touchStartX.current = null;
+  // };
 
   // --- стрелки на клавиатуре ---
   useEffect(() => {
@@ -147,11 +147,7 @@ export default function WeddingInviteBook() {
             <CardContentWrapper className="p-0">
               {page !== 0 && <Header page={page} total={total} goTo={goTo} />}
 
-              <div
-                className="relative h-[70vh] md:h-[68vh] lg:h-[60vh] select-none"
-                onTouchStart={onTouchStart}
-                onTouchEnd={onTouchEnd}
-              >
+              <div className="relative h-[70vh] md:h-[68vh] lg:h-[60vh] select-none">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={page}
