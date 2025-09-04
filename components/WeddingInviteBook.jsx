@@ -396,6 +396,7 @@ function RsvpEmailPage({ displayName, onSubmitted }) {
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // <-- новое состояние
 
   useEffect(() => {
     emailjs.init("T3044GPpyR59dc_zU");
@@ -407,6 +408,8 @@ function RsvpEmailPage({ displayName, onSubmitted }) {
 
     if (!attend) return setError("Пожалуйста, выберите ответ");
 
+    setLoading(true); // блокируем кнопку сразу
+
     const templateParams = { name: displayName, attending: attend, message };
     emailjs
       .send("service_svtyp46", "template_s457txe", templateParams)
@@ -414,7 +417,8 @@ function RsvpEmailPage({ displayName, onSubmitted }) {
         setSent(true);
         onSubmitted();
       })
-      .catch(() => setError("Ошибка при отправке. Попробуйте снова."));
+      .catch(() => setError("Ошибка при отправке. Попробуйте снова."))
+      .finally(() => setLoading(false)); // разблокируем кнопку, если нужно повторное отправление
   };
 
   return (
@@ -428,7 +432,6 @@ function RsvpEmailPage({ displayName, onSubmitted }) {
           onSubmit={submit}
           className="w-full max-w-md flex flex-col gap-5 bg-white/90 p-6 rounded-2xl shadow-lg"
         >
-          {/* Статическая надпись с именами гостей */}
           <h2 className="text-center text-lg md:text-3xl font-medium mb-2 ">
             {displayName}
           </h2>
@@ -457,9 +460,12 @@ function RsvpEmailPage({ displayName, onSubmitted }) {
 
           <button
             type="submit"
-            className="w-full py-3 bg-[#8b5e3c] text-white rounded-2xl hover:bg-[#a9745a] font-semibold"
+            disabled={loading} // <-- блокировка кнопки
+            className={`w-full py-3 bg-[#8b5e3c] text-white rounded-2xl font-semibold hover:bg-[#a9745a] transition ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            Отправить
+            {loading ? "Отправка..." : "Отправить"}
           </button>
         </form>
       ) : (
