@@ -492,7 +492,7 @@ function AddressPage() {
         </p>
         <div className="flex justify-center gap-4 mt-3">
           <a
-            href="https://naver.me/xxxxChurch"
+            href="https://naver.me/5EnCKXkX"
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 py-2 bg-[#8b5e3c] text-white rounded-2xl hover:bg-[#a9745a] text-sm md:text-base font-semibold"
@@ -500,7 +500,7 @@ function AddressPage() {
             Naver Map
           </a>
           <a
-            href="https://kko.kakao.com/xxxxChurch"
+            href="https://kko.kakao.com/ipJO_7-LqI"
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 py-2 bg-[#c99b6c] text-white rounded-2xl hover:bg-[#b07a4f] text-sm md:text-base font-semibold"
