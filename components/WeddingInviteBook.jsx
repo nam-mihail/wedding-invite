@@ -331,13 +331,10 @@ function InvitationWithSchedulePage({ displayName, mainText }) {
               <strong>День:</strong> 4.10.2025
             </li>
             <li>
-              <strong>Прибытие гостей:</strong> 18:00
+              <strong>Венчание в Церкви:</strong> 17:00 - 17:30
             </li>
             <li>
-              <strong>Венчание:</strong> 18:15
-            </li>
-            <li>
-              <strong>Развлечения и ужин:</strong> 18:45 - 21:00
+              <strong>Развлечения и ужин в Wedding Hall:</strong> 18:00 – 21:00
             </li>
           </ul>
         </div>
@@ -482,29 +479,61 @@ function AddressPage() {
     <div className="h-full overflow-auto flex flex-col items-center justify-center p-6 md:p-10">
       <MapPin className="h-10 w-10 text-[#6b4226]" />
       <h2 className="mt-4 text-2xl md:text-4xl text-center text-[#6b4226]">
-        Адрес
+        Адреса
       </h2>
-      <p className="mt-2 md:text-4xl text-center">Wedding Hall "Selene"</p>
-      <p className="mt-2 md:text-xl text-center">
-        충남 천안시 동남구 배울1길 35
-      </p>
-      <div className="flex flex-col md:flex-row gap-4 mt-4">
-        <a
-          href="https://naver.me/xxFFYWmg"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-6 py-3 bg-[#8b5e3c] text-white rounded-2xl hover:bg-[#a9745a] text-center font-semibold"
-        >
-          Открыть в Naver Map
-        </a>
-        <a
-          href="https://kko.kakao.com/RALXOaJ5Yn"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-6 py-3 bg-[#c99b6c] text-white rounded-2xl hover:bg-[#b07a4f] text-center font-semibold"
-        >
-          Открыть в Kakao Map
-        </a>
+
+      {/* --- Церковь --- */}
+      <div className="mt-6 bg-white/80 border border-[#d9c2a9] rounded-2xl p-6 shadow-md w-full max-w-xl text-center">
+        <h3 className="text-xl md:text-2xl font-semibold text-[#6b4226] mb-2">
+          Церковь "Любовь Христа"
+        </h3>
+        <p className="text-sm md:text-lg">
+          충청남도 천안시 동남구 천안천7길 16
+        </p>
+        <div className="flex justify-center gap-4 mt-3">
+          <a
+            href="https://naver.me/xxxxChurch"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 bg-[#8b5e3c] text-white rounded-2xl hover:bg-[#a9745a] text-sm md:text-base font-semibold"
+          >
+            Naver Map
+          </a>
+          <a
+            href="https://kko.kakao.com/xxxxChurch"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 bg-[#c99b6c] text-white rounded-2xl hover:bg-[#b07a4f] text-sm md:text-base font-semibold"
+          >
+            Kakao Map
+          </a>
+        </div>
+      </div>
+
+      {/* --- Wedding Hall --- */}
+      <div className="mt-6 bg-white/80 border border-[#d9c2a9] rounded-2xl p-6 shadow-md w-full max-w-xl text-center">
+        <h3 className="text-xl md:text-2xl font-semibold text-[#6b4226] mb-2">
+          Wedding Hall "Selene"
+        </h3>
+        <p className="text-sm md:text-lg">충남 천안시 동남구 배울1길 35</p>
+        <div className="flex justify-center gap-4 mt-3">
+          <a
+            href="https://naver.me/xxFFYWmg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 bg-[#8b5e3c] text-white rounded-2xl hover:bg-[#a9745a] text-sm md:text-base font-semibold"
+          >
+            Naver Map
+          </a>
+          <a
+            href="https://kko.kakao.com/RALXOaJ5Yn"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 bg-[#c99b6c] text-white rounded-2xl hover:bg-[#b07a4f] text-sm md:text-base font-semibold"
+          >
+            Kakao Map
+          </a>
+        </div>
       </div>
     </div>
   );
