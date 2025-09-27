@@ -334,7 +334,7 @@ function InvitationWithSchedulePage({ displayName, mainText }) {
               <strong>Венчание в Церкви:</strong> 17:00 - 17:30
             </li>
             <li>
-              <strong>Развлечения и ужин в Wedding Hall:</strong> 18:00 – 21:00
+              <strong>Развлечения и ужин в Wedding Hall:</strong> 18:30 – 21:00
             </li>
           </ul>
         </div>
