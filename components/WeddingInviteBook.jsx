@@ -27,11 +27,10 @@ function useGuestNamesFromUrl() {
   };
 
   useEffect(() => {
-    if (typeof window === "undefined") return; // на всякий случай для SSR
+    if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
 
-    // Поддержка нескольких схем
-    const combinedEncrypted = params.get("guests"); // "Иван,Мария"
+    const combinedEncrypted = params.get("guests"); //
     const name1 = params.get("name1") || params.get("guest1");
     const name2 = params.get("name2") || params.get("guest2");
 
@@ -46,13 +45,12 @@ function useGuestNamesFromUrl() {
             .map((s) => s.trim())
             .filter(Boolean);
         }
-        break; // нашли параметр, можно прервать цикл
+        break;
       }
     }
     setGuestNames(names);
   }, []);
 
-  // Умный формат списка имен: "Иван", "Иван и Мария", "Иван, Мария и Алексей"
   const formatNames = (arr) => {
     if (arr.length <= 1) return arr[0] || "";
     if (arr.length === 2) return `${arr[0]} и ${arr[1]}`;
@@ -348,9 +346,39 @@ function InvitationWithSchedulePage({ displayName, mainText }) {
 }
 
 function SeatingPage() {
-  const tables = Array.from({ length: 12 }, () =>
-    Array.from({ length: 7 }, (_, j) => `Гость ${j + 1}`)
-  );
+  const tables = [
+    [
+      "Виталий",
+      "Алена",
+      "Валентин",
+      "Татьяна",
+      "Дедушка Анатолий",
+      "Марина",
+      "Константин",
+      "Вячеслав",
+      "Игорь",
+      "Елена",
+    ],
+    [
+      "Пастор Герасим",
+      "Самоним Мэри",
+      "Евгений",
+      "Асель",
+      "Максут",
+      "Галина",
+      "Сергей",
+      "Алена",
+      "Виталий",
+      "Юлия",
+    ],
+    ["Николай", "Александра", "Константин", "Наталья", "Артур", "Юлия"],
+    ["Анжелика", "Виктор", "Александр", "Олег", "Светлана", "Александр"],
+    ["Дмитрий", "Валерия", "Алишер", "Айзада", "Зарина", "Александр"],
+    ["Роман", "Юлия", "Юрий", "Милена", "Эрнест", "Татьяна"],
+    ["Виталий", "Олег", "Александра", "Валера", "Яна", "Тима"],
+    ["Ангелина", "Ангелина", "Ирина", "Радион", "Ирина"],
+    ["Дмитрий", "Юлия", "Евгений", "Елена", "Валерия", "Евгений"],
+  ];
 
   return (
     //add relative
@@ -363,9 +391,9 @@ function SeatingPage() {
         {tables.map((table, idx) => (
           <div
             key={idx}
-            className="bg-white/80 border border-[#d9c2a9] rounded-2xl p-4 shadow-md flex flex-col items-center"
+            className="bg-white/80 border border-[#d9c2a9] rounded-2xl p-4 shadow-md flex flex-col"
           >
-            <h3 className="font-semibold mb-2">Стол {idx + 1}</h3>
+            <h3 className="font-semibold mb-2 text-center">Стол {idx + 1}</h3>
             <ul className="text-sm md:text-base space-y-1">
               {table.map((guest, gIdx) => (
                 <li key={gIdx}>{guest}</li>
@@ -375,15 +403,14 @@ function SeatingPage() {
         ))}
       </div>
 
-      {/* --- Затемняющий слой с сообщением --- */}
-      <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center p-6 rounded-2xl">
+      {/* <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center p-6 rounded-2xl">
         <h3 className="text-xl md:text-3xl font-semibold mb-2 text-[#6b4226]">
           Рассадка гостей
         </h3>
         <p className="text-center text-sm md:text-lg">
           Рассадка будет доступна позже. Следите за обновлениями!
         </p>
-      </div>
+      </div> */}
     </div>
   );
 }
@@ -393,7 +420,7 @@ function RsvpEmailPage({ displayName, onSubmitted }) {
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // <-- новое состояние
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     emailjs.init("T3044GPpyR59dc_zU");
@@ -405,7 +432,7 @@ function RsvpEmailPage({ displayName, onSubmitted }) {
 
     if (!attend) return setError("Пожалуйста, выберите ответ");
 
-    setLoading(true); // блокируем кнопку сразу
+    setLoading(true);
 
     const templateParams = { name: displayName, attending: attend, message };
     emailjs
@@ -415,7 +442,7 @@ function RsvpEmailPage({ displayName, onSubmitted }) {
         onSubmitted();
       })
       .catch(() => setError("Ошибка при отправке. Попробуйте снова."))
-      .finally(() => setLoading(false)); // разблокируем кнопку, если нужно повторное отправление
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -457,7 +484,7 @@ function RsvpEmailPage({ displayName, onSubmitted }) {
 
           <button
             type="submit"
-            disabled={loading} // <-- блокировка кнопки
+            disabled={loading}
             className={`w-full py-3 bg-[#8b5e3c] text-white rounded-2xl font-semibold hover:bg-[#a9745a] transition ${
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}
@@ -482,7 +509,6 @@ function AddressPage() {
         Адреса
       </h2>
 
-      {/* --- Церковь --- */}
       <div className="mt-6 bg-white/80 border border-[#d9c2a9] rounded-2xl p-6 shadow-md w-full max-w-xl text-center">
         <h3 className="text-xl md:text-2xl font-semibold text-[#6b4226] mb-2">
           Церковь "Любовь Христа"
@@ -547,7 +573,6 @@ function VideoGreetingPage() {
       </h2>
 
       <div className="flex flex-col md:flex-row w-full max-w-5xl gap-6">
-        {/* --- Левая часть: инструкция --- */}
         <div className="flex-1 bg-white/90 border border-[#d9c2a9] rounded-2xl p-6 shadow-md max-h-[60vh] overflow-auto">
           <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#6b4226]">
             Опросник для свадебного видео-поздравления
@@ -586,13 +611,12 @@ function VideoGreetingPage() {
           </p>
         </div>
 
-        {/* --- Правая часть: ссылка на Telegram --- */}
         <div className="flex-1 flex flex-col items-center justify-center bg-white/90 border border-[#d9c2a9] rounded-2xl p-6 shadow-md">
           <h3 className="text-xl md:text-2xl font-semibold mb-4 text-[#6b4226]">
             Куда отправить видео
           </h3>
           <a
-            href="https://t.me/luna_lina02" // <-- вставь свой Telegram username или ссылку на чат
+            href="https://t.me/luna_lina02" //
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#8b5e3c] text-white font-semibold hover:bg-[#a9745a] transition"
