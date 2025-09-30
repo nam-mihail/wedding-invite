@@ -358,6 +358,8 @@ function SeatingPage() {
       "Вячеслав",
       "Игорь",
       "Елена",
+      "Валерий",
+      "Ирина",
     ],
     [
       "Пастор Герасим",
@@ -513,12 +515,10 @@ function AddressPage() {
         <h3 className="text-xl md:text-2xl font-semibold text-[#6b4226] mb-2">
           Церковь "Любовь Христа"
         </h3>
-        <p className="text-sm md:text-lg">
-          충청남도 천안시 동남구 천안천7길 16
-        </p>
+        <p className="text-sm md:text-lg">충남 천안시 동남구 성황동 12-51</p>
         <div className="flex justify-center gap-4 mt-3">
           <a
-            href="https://naver.me/5EnCKXkX"
+            href="https://naver.me/5Qi0bVHT"
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 py-2 bg-[#8b5e3c] text-white rounded-2xl hover:bg-[#a9745a] text-sm md:text-base font-semibold"
@@ -526,7 +526,7 @@ function AddressPage() {
             Naver Map
           </a>
           <a
-            href="https://kko.kakao.com/ipJO_7-LqI"
+            href="https://kko.kakao.com/IBDLJ3cm2x"
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 py-2 bg-[#c99b6c] text-white rounded-2xl hover:bg-[#b07a4f] text-sm md:text-base font-semibold"
